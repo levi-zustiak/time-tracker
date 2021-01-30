@@ -2,7 +2,8 @@ import  uuidv4 from 'uuid/v4';
 
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView, } from 'react-native';
+import PropTypes from 'prop-types';
 
 import EditableTimer from './components/EditableTimer';
 import ToggleableTimerForm from './components/ToggleableTimerForm';
@@ -10,22 +11,7 @@ import { newTimer } from './utils/TimerUtils';
 
 export default class App extends React.Component {
   state = {
-    timers: [
-      {
-        title: 'Mow the lawn',
-        project: 'House Chores',
-        id: uuidv4(),
-        elapsed: 5456099,
-        isRunning: true,
-      },
-      {
-        title: 'Bake squash',
-        project: 'Kitchen Chores',
-        id: uuidv4(),
-        elapsed: 1273998,
-        isRunning: false,
-      },
-    ],
+    timers: [],
   };
 
   handleCreateFormSubmit = timer => {
@@ -70,7 +56,7 @@ export default class App extends React.Component {
         timers: timers.map(timer => {
           const { id, isRunning } = timer;
 
-          if (id === timerId ) {
+          if (id === timerId) {
             return {
               ...timer,
               isRunning: !isRunning,
@@ -114,27 +100,32 @@ export default class App extends React.Component {
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Timers</Text>
         </View>
-        <ScrollView style={styles.timerList}>
-          <ToggleableTimerForm
-            onFormSubmit={this.handleCreateFormSubmit}
-          />
-          {timers.map(
-            ({ title, project, id, elapsed, isRunning }) => (
-              <EditableTimer
-                key={id}
-                id={id}
-                title={title}
-                project={project}
-                elapsed={elapsed}
-                isRunning={isRunning}
-                onFormSubmit={this.handleFormSubmit}
-                onRemovePress={this.handleRemovePress}
-                onStartPress={this.toggleTimer}
-                onStopPress={this.toggleTimer}
-              />
-            ),
-          )}
-        </ScrollView>
+        <KeyboardAvoidingView
+          behavior="padding"
+          style={styles.timerListContainer}
+        >
+          <ScrollView style={styles.timerList}>
+            <ToggleableTimerForm
+              onFormSubmit={this.handleCreateFormSubmit}
+            />
+            {timers.map(
+              ({ title, project, id, elapsed, isRunning }) => (
+                <EditableTimer
+                  key={id}
+                  id={id}
+                  title={title}
+                  project={project}
+                  elapsed={elapsed}
+                  isRunning={isRunning}
+                  onFormSubmit={this.handleFormSubmit}
+                  onRemovePress={this.handleRemovePress}
+                  onStartPress={this.toggleTimer}
+                  onStopPress={this.toggleTimer}
+                />
+              ),
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
     );
   }
@@ -157,5 +148,8 @@ const styles = StyleSheet.create({
   },
   timerList: {
     paddingBottom: 15,
+  },
+  timerListContainer: {
+    flex: 1,
   },
 });
